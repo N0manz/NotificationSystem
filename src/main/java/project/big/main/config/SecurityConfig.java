@@ -17,15 +17,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Обновлённый способ отключения CSRF
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login").permitAll() // Разрешаем доступ к этим маршрутам без авторизации
-                        .anyRequest().authenticated() // Все остальные запросы требуют авторизации
+                        .anyRequest().permitAll()
                 )
-                .formLogin(form -> form
-                        .defaultSuccessUrl("/") // Указываем путь для успешного входа
-                        .permitAll()
-                );
+                .formLogin(form -> form.disable());
+
 
         return http.build();
     }

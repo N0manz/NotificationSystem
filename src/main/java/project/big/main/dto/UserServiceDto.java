@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class UserServiceDto {
-    private Long userId;
+    private Long id; // ID записи сервиса
     private String serviceEmail;
-    private String servicePassword;
+    private String Link;
 }
 
