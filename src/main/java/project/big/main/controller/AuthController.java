@@ -9,13 +9,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
+    @Autowired
     private final UserRepository userRepository;
+    @Autowired
     private final BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
@@ -33,5 +41,6 @@ public class AuthController {
 
         return ResponseEntity.ok("User registered successfully!");
     }
+
 }
 
