@@ -2,11 +2,12 @@ package project.big.main.controller;
 
 import project.big.main.dto.AddServiceRequestDto;
 import project.big.main.dto.UserServiceDto;
+import project.big.main.service.NotificationService;
 import project.big.main.service.UserLinkedServiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.Map;
 import java.util.List;
 
 @RestController
@@ -15,7 +16,7 @@ import java.util.List;
 public class UserLinkedServiceController {
 
     private final UserLinkedServiceService linkedServiceService;
-
+    private final NotificationService notificationService;
     // Добавление нового сервиса
     @PostMapping
     public ResponseEntity<UserServiceDto> addService(@PathVariable Long userId,
@@ -37,4 +38,19 @@ public class UserLinkedServiceController {
         linkedServiceService.deleteService(serviceId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/notifications")
+    public ResponseEntity<List<Map<String, Object>>> getUserNotifications(@PathVariable Long userId) {
+        // Получаем список сервисов пользователя
+        List<UserServiceDto> userServices = linkedServiceService.getUserServices(userId);
+
+        // Передаём сервисы в Python-сервис для получения уведомлений
+        List<Map<String, Object>> notifications = notificationService.fetchNotificationsFromPython(userServices);
+
+        return ResponseEntity.ok(notifications);
+    }
+
+
+
+
 }

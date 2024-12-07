@@ -30,7 +30,7 @@ public class UserLinkedServiceService {
         linkedService.setUser(user);
         linkedService.setServiceEmail(dto.getServiceEmail());
         linkedService.setLink(dto.getLink());
-        linkedService.setServicePasswordHash(passwordEncoder.encode(dto.getServicePassword()));
+        linkedService.setServicePasswordHash(dto.getServicePassword());
 
         UserLinkedService savedService = userLinkedServiceRepository.save(linkedService);
 
