@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/users/{userId}/linked-services")
@@ -17,10 +19,13 @@ public class UserLinkedServiceController {
 
     private final UserLinkedServiceService linkedServiceService;
     private final NotificationService notificationService;
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     // Добавление нового сервиса
     @PostMapping
     public ResponseEntity<UserServiceDto> addService(@PathVariable Long userId,
                                                      @RequestBody AddServiceRequestDto dto) {
+        logger.info("хуй хуй хуй хуй хуй хуй" + userId);
+        logger.info("хуй хуй хуй" + dto);
         UserServiceDto responseDto = linkedServiceService.addService(userId, dto);
         return ResponseEntity.ok(responseDto);
     }

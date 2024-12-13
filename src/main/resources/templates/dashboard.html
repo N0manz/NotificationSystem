@@ -135,7 +135,7 @@
 </div>
 
 <script>
-    const userId = 123; // Замените на ID текущего пользователя
+    const userId = window.location.pathname.split("/")[2]; // Замените на ID текущего пользователя
 
     // Открытие модального окна
     const modal = document.getElementById("addServiceModal");
@@ -189,8 +189,11 @@
                 const serviceList = document.getElementById("serviceList");
                 serviceList.innerHTML = services
                     .map(
-                        s =>
-                            `<li>${s.name} <button onclick="removeService(${s.id})">Remove</button></li>`
+                        (s) =>
+                            `<li>
+                            <a href="${s.link}" target="_blank">${s.link}</a>
+                            <button onclick="removeService(${s.id})">Remove</button>
+                        </li>`
                     )
                     .join('');
             } else {
@@ -200,6 +203,7 @@
             console.error("Error loading services:", error);
         }
     }
+
 
     // Удаление сервиса (без изменений)
     async function removeService(serviceId) {
