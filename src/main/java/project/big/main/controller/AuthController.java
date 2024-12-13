@@ -22,6 +22,8 @@ public class AuthController {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
+
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequestDto registerRequestDto) {
         if (userRepository.existsByEmail(registerRequestDto.getEmail())) {
