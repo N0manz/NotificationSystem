@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
-
-@RestController
+import org.springframework.stereotype.Controller;
+@Controller
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
@@ -23,7 +23,10 @@ public class AuthController {
     private final BCryptPasswordEncoder passwordEncoder;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-
+    @GetMapping("/register")
+    public String showRegisterPage() {
+        return "register"; // Название файла register.html (без расширения)
+    }
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequestDto registerRequestDto) {
         if (userRepository.existsByEmail(registerRequestDto.getEmail())) {
@@ -38,7 +41,10 @@ public class AuthController {
         return ResponseEntity.ok("User registered successfully!");
     }
 
-
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login"; // Название файла register.html (без расширения)
+    }
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDto loginRequest) {
         logger.info("Entering login method with email: {}", loginRequest.getEmail());
@@ -60,7 +66,10 @@ public class AuthController {
         String token = JwtUtil.generateToken(user.getId().toString());
         logger.info("Generated JWT Token for user: {}", loginRequest.getEmail());
 
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "user_id", user.getId().toString()
+        ));
     }
 
 }
