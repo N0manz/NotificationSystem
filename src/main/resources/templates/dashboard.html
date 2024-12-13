@@ -22,6 +22,9 @@
         }
         .notifications h2 {
             margin-top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .services {
             flex: 1;
@@ -98,14 +101,14 @@
             padding: 10px 20px;
             margin-top: 10px;
         }
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
 <div class="notifications">
-    <h2>Notifications</h2>
+    <h2>
+        Notifications
+        <button id="parseNotificationsBtn">Parse Notifications</button>
+    </h2>
     <div id="notificationList">
         <!-- Список уведомлений -->
     </div>
@@ -135,7 +138,7 @@
 </div>
 
 <script>
-    const userId = window.location.pathname.split("/")[2]; // Замените на ID текущего пользователя
+    const userId = window.location.pathname.split("/")[2]; // Извлекаем userId из URL
 
     // Открытие модального окна
     const modal = document.getElementById("addServiceModal");
@@ -180,7 +183,65 @@
         }
     });
 
-    // Загрузка сервисов (без изменений)
+    // Загрузка уведомлений
+    async function loadNotifications() {
+        try {
+            const response = await fetch(`http://localhost:8080/users/${userId}/linked-services/notifications`);
+            if (response.ok) {
+                const notifications = await response.json();
+                console.log("Notifications received:", notifications);
+
+                const notificationList = document.getElementById("notificationList");
+                notificationList.innerHTML = notifications
+                    .map((user) => {
+                        const username = `<strong>Username: ${user.username}</strong>`;
+                        const notificationItems = user.notifications
+                            .map(
+                                (n) =>
+                                    `<li>
+                                    <a href="${n.link}" target="_blank">${n.title}</a>
+                                </li>`
+                            )
+                            .join('');
+                        return `
+                        <div>
+                            ${username}
+                            <ul>${notificationItems}</ul>
+                        </div>
+                    `;
+                    })
+                    .join('');
+            } else {
+                console.error("Failed to load notifications");
+            }
+        } catch (error) {
+            console.error("Error loading notifications:", error);
+        }
+    }
+
+
+    // Парсинг уведомлений
+    document.getElementById("parseNotificationsBtn").addEventListener("click", async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/users/${userId}/linked-services/notifications`, {
+                method: "POST", // Метод парсинга
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.ok) {
+                alert("Parsing started successfully!");
+                loadNotifications(); // Обновляем уведомления после парсинга
+            } else {
+                alert("Failed to start parsing.");
+            }
+        } catch (error) {
+            console.error("Error starting parsing:", error);
+        }
+    });
+
+    // Загрузка сервисов
     async function loadServices() {
         try {
             const response = await fetch(`http://localhost:8080/users/${userId}/linked-services`);
@@ -191,9 +252,9 @@
                     .map(
                         (s) =>
                             `<li>
-                            <a href="${s.link}" target="_blank">${s.link}</a>
-                            <button onclick="removeService(${s.id})">Remove</button>
-                        </li>`
+                                    <a href="${s.link}" target="_blank">${s.link}</a>
+                                    <button onclick="removeService(${s.id})">Remove</button>
+                                </li>`
                     )
                     .join('');
             } else {
@@ -204,8 +265,7 @@
         }
     }
 
-
-    // Удаление сервиса (без изменений)
+    // Удаление сервиса
     async function removeService(serviceId) {
         if (confirm("Are you sure you want to delete this service?")) {
             try {
@@ -215,7 +275,7 @@
                 );
                 if (response.ok) {
                     alert("Service removed successfully!");
-                    loadServices(); // Перезагрузка списка
+                    loadServices();
                 } else {
                     alert("Failed to remove service.");
                 }
@@ -226,6 +286,7 @@
     }
 
     // Загрузка данных при загрузке страницы
+    loadNotifications();
     loadServices();
 </script>
 </body>
